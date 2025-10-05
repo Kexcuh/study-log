@@ -1,0 +1,37 @@
+Unreal Engine Constructor & Custom Movement Component Notes
+
+	My goal: Replacing the UCharacterMovementComponent in the ACharacter class with custom version.
+
+
+		FObjectInitializer - UE internal system for creating subobjects (cameras, movement, mesh, etc)
+		THIS IS HOW ALL OBJECT IN UNREAL ENGINE ARE INITIALIZED UPON THE GAME STARTING.
+
+			"const FObjectInitializer& ObjectInitializer"
+
+				- I never need to pass this manually, it's automatically injected when spawning objects.
+
+
+			Default form: 
+			
+				"ACharacter(const FObjectInitializer& ObjectInitializer = FObjectIntializer:Get());"
+
+
+		Key Thing to remember:
+
+
+			The base constructor for my custom character class looks like this: 
+			
+				AMyCharacter()
+
+			To customize the subobjects that are created or in this case specifically the custom movement component, we need to modify it like this:
+
+				AMyCharacter(const FObjectInitializer& ObjectInitializer);
+
+			We then input our custom created movement class we will then override the constructor like this:
+
+				AMyCharacter::AMyCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultobjectclass<UMyMovementComponent>(ACharacter::CharacterMovementComponentName));
+
+			I found "CharacterMovementComponentName" in the ACharacter class commented that it can be modified.
+			The super here is passing the movement component to the parent (AMyCharacter(const FObjectInitializer& ObjectInitializer)) to then change the movement component object assigned to the character.
+
+			*** INITIALIZATION OF OBJECT HAPPEN BEFORE THE BODY OF THE CONSTRUCTOR RUNS. CONSTRUCTORS CAN ONLY BE INVOKED ONCE PER OBJECT CONSTRUCTION CHAIN.
